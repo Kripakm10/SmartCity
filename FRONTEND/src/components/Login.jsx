@@ -173,7 +173,7 @@ const Login = () => {
 
           <Typography variant="body2" align="center" sx={{ mt: 3, color: 'text.secondary' }}>
             Don't have an account?{' '}
-            <Link component={RouterLink} to="/signup" underline="hover" color="secondary">
+            <Link component={RouterLink} to="/s" underline="hover" color="secondary">
               Create one
             </Link>
           </Typography>
