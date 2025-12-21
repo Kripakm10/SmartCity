@@ -9,8 +9,13 @@ import {
   createTheme,
   ThemeProvider,
   CssBaseline,
+  FormControlLabel,
+  Checkbox,
+  IconButton,
+  InputAdornment,
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 // 🌈 Theme
 const theme = createTheme({
@@ -24,9 +29,13 @@ const theme = createTheme({
 });
 
 const Login = () => {
-  const [input, setInput] = useState({});
+  const [input, setInput] = useState({ email: '', password: '' });
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const inputHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -34,19 +43,33 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submitted data:', input);
+    setErrorMessage('');
+
+    if (!input.email || !input.password) {
+      setErrorMessage('Email and password are required');
+      return;
+    }
 
     axios
       .post('http://localhost:3000/api/', input)
       .then((response) => {
-        console.log('Login success:', response.data);
+        const { token, user, message } = response.data;
+        // store token in localStorage or sessionStorage depending on remember
+        const storage = remember ? localStorage : sessionStorage;
+        if (token) storage.setItem('token', token);
+        if (user) storage.setItem('user', JSON.stringify(user));
+
         setErrorMessage('');
-        setSuccessMessage('Login successful!');
-        // ✅ Redirect logic here if needed
+        setSuccessMessage(message || 'Login successful!');
+        setTimeout(() => navigate('/home'), 600);
       })
       .catch((error) => {
-        console.error('Login error:', error);
-        setErrorMessage('Login failed. Please check your credentials.');
+        console.error('Login error:', error, error?.response?.data);
+        const msg =
+          error?.response?.data?.message ||
+          (error?.response?.data?.errors && error.response.data.errors[0]?.msg) ||
+          'Login failed. Please check your credentials.';
+        setErrorMessage(msg);
         setSuccessMessage('');
       });
   };
@@ -70,114 +93,88 @@ const Login = () => {
           sx={{
             width: '100%',
             maxWidth: 420,
-            bgcolor: 'rgba(255, 255, 255, 0.9)',
+            bgcolor: 'rgba(255, 255, 255, 0.95)',
             borderRadius: 4,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
             p: 4,
           }}
         >
           <Typography variant="h4" gutterBottom align="center" color="primary">
-            Smart City Login
+            Smart City Sign In
           </Typography>
 
-          <Typography
-            variant="subtitle1"
-            align="center"
-            sx={{ color: 'text.secondary', mb: 3 }}
-          >
-            Access your smart city dashboard
+          <Typography variant="subtitle1" align="center" sx={{ color: 'text.secondary', mb: 3 }}>
+            Secure access to your smart city dashboard
           </Typography>
 
           <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Full Name"
-              variant="outlined"
-              margin="normal"
-              name="fullName"
-              onChange={inputHandler}
-              InputLabelProps={{ style: { fontSize: 14 } }}
-            />
             <TextField
               fullWidth
               label="Email"
               variant="outlined"
               margin="normal"
               name="email"
+              value={input.email}
               onChange={inputHandler}
               InputLabelProps={{ style: { fontSize: 14 } }}
             />
+
             <TextField
               fullWidth
               label="Password"
               variant="outlined"
               margin="normal"
               name="password"
-              type="password"
+              value={input.password}
+              type={showPassword ? 'text' : 'password'}
               onChange={inputHandler}
               InputLabelProps={{ style: { fontSize: 14 } }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword((s) => !s)}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
 
-            {/* 🔹 Forgot Password */}
-            <Box sx={{ textAlign: 'right', mt: 1 }}>
-              <Link
-                component={RouterLink}
-                to="/res"
-                underline="hover"
-                color="secondary"
-                variant="body2"
-              >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+              <FormControlLabel
+                control={<Checkbox checked={remember} onChange={(e) => setRemember(e.target.checked)} />}
+                label="Remember me"
+              />
+
+              <Link component={RouterLink} to="/res" underline="hover" color="secondary" variant="body2">
                 Forgot Password?
               </Link>
             </Box>
 
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              type="submit"
-              sx={{ mt: 3, py: 1 }}
-            >
-              <Link component={RouterLink} to="/home" underline="hover" >
-                                            LOGIN</Link>
+            <Button fullWidth variant="contained" color="primary" type="submit" sx={{ mt: 3, py: 1 }}>
+              Sign In
             </Button>
           </form>
 
-          {/* ✅ Messages */}
           {successMessage && (
-            <Typography
-              variant="body1"
-              align="center"
-              color="success.main"
-              sx={{ mt: 2 }}
-            >
+            <Typography variant="body1" align="center" color="success.main" sx={{ mt: 2 }}>
               {successMessage}
             </Typography>
           )}
           {errorMessage && (
-            <Typography
-              variant="body1"
-              align="center"
-              color="error.main"
-              sx={{ mt: 2 }}
-            >
+            <Typography variant="body1" align="center" color="error.main" sx={{ mt: 2 }}>
               {errorMessage}
             </Typography>
           )}
 
-          <Typography
-            variant="body2"
-            align="center"
-            sx={{ mt: 3, color: 'text.secondary' }}
-          >
+          <Typography variant="body2" align="center" sx={{ mt: 3, color: 'text.secondary' }}>
             Don't have an account?{' '}
-            <Link
-              component={RouterLink}
-              to="/signup"
-              underline="hover"
-              color="secondary"
-            >
-              Signup here
+            <Link component={RouterLink} to="/signup" underline="hover" color="secondary">
+              Create one
             </Link>
           </Typography>
         </Box>

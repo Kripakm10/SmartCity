@@ -9,7 +9,8 @@ import Registration from './components/Registration'
 import Home from './components/Home'
 import Contact from './components/Contact'
 import Mission from './components/Mission'
-import WasteManagement from './components/Wastemanagement'
+import WasteManagement from './components/WasteManagement'
+import UserDashboard from './components/UserDashboard'
 import AdminDashboard from './components/AdminDashboard'
 import Reset from './components/Reset'
 
@@ -27,6 +28,7 @@ function App() {
         <Route path='/r' element={<Registration/>}></Route>
         <Route path='/co' element={<Contact/>}></Route>
         <Route path='/mi' element={<Mission/>}></Route>
+        <Route path='/user' element={<UserDashboard/>}></Route>
          <Route path='/waste' element={<WasteManagement/>}></Route>
           <Route path='/admin' element={<AdminDashboard/>}></Route>
          <Route path='/res' element={<Reset/>}></Route>

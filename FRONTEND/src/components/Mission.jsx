@@ -76,7 +76,7 @@ const Mission = () => {
       <Box sx={{ py: 8, px: { xs: 2, md: 6 }, bgcolor: "#fff" }}>
         <Grid container spacing={4} justifyContent="center">
           {/* Mission Statement */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper
               elevation={6}
               sx={{
@@ -105,7 +105,7 @@ const Mission = () => {
           </Grid>
 
           {/* Vision Statement */}
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper
               elevation={6}
               sx={{
@@ -164,7 +164,7 @@ const Mission = () => {
               desc: "Engaging citizens, businesses, and institutions to collaboratively shape better cities.",
             },
           ].map((value, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
               <Paper
                 elevation={3}
                 sx={{

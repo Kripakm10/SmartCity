@@ -1,25 +1,35 @@
-var express=require('express');
-var cors=require('cors');
-var dotenv=require('dotenv');
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
 dotenv.config();
-var path = require('path')
+const path = require('path');
 
-const port=process.env.port
+const port = process.env.PORT || process.env.port || 3000;
 require('./connection');
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
-const userroute=require('./route/userroute')
+const userroute = require('./route/userroute');
+const wasteroute = require('./route/wasteRoute');
+const registrationRoute = require('./route/registrationRoute');
+const logRoute = require('./route/logRoute');
 
+app.use('/api', userroute);
+app.use('/api/waste', wasteroute);
+app.use('/api/registrations', registrationRoute);
+app.use('/api/logs', logRoute);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Basic error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: 'Internal Server Error' });
+});
 
-app.use('/api',userroute)
+app.listen(port, () => {
+    console.log(`Server is up and running on port ${port}`);
+});
 
-
-app.use('/uploads',express.static(path.join(__dirname,"uploads")))
-
-app.listen(port,()=>{
-    console.log(`Server is up and running in ${port}`)
-})
+module.exports = app;

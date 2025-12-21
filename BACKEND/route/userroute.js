@@ -1,31 +1,58 @@
-var express=require('express');
-var router=express.Router();
-var userModel=require('../model/user');
+const express = require('express');
+const { body, param, validationResult } = require('express-validator');
+const router = express.Router();
+const userController = require('../controllers/userController');
+const { auth, isAdmin } = require('../middleware/auth');
 
-//api for signup
-router.post('/s',async(req,res)=>{
+
+
+// validation runner middleware
+const runValidation = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ message: errors.array()[0].msg, errors: errors.array() });
+    next();
+};
+
+// Signup (frontend posts to /api/s)
+router.post(
+    '/s',
+    body('fullName').isLength({ min: 2 }).withMessage('Full name required'),
+    body('email').isEmail().withMessage('Valid email required'),
+    body('password').isLength({ min: 6 }).withMessage('Password min 6 chars'),
+    body('phone').optional().isMobilePhone('any').withMessage('Valid phone number'),
+    body('city').optional().isLength({ min: 2 }).withMessage('City name too short'),
+    runValidation,
+    userController.signup
+);
+
+// Login (frontend posts to /api/)
+router.post(
+    '/',
+    body('email').isEmail().withMessage('Valid email required'),
+    body('password').isLength({ min: 1 }).withMessage('Password required'),
+    runValidation,
+    userController.login
+);
+
+// Forgot password
+router.post('/forgot-password', userController.forgotPassword);
+
+// helper to combine auth + isAdmin safely into a single middleware
+const adminOnly = (req, res, next) => {
     try {
-        console.log(req.body)
-        await userModel(req.body).save();
-        res.status(200).send({message:"User added successfully"})
-    } catch (error) {
-        console.log(error)
-       res.status(500).send({message:"Something went wrong"}) 
+        auth(req, res, (err) => {
+            if (err) return next(err);
+            isAdmin(req, res, next);
+        });
+    } catch (err) {
+        next(err);
     }
-})
+};
 
-//api for login
-router.post('/',async(req,res)=>{
-    try {
-        const user=await userModel.findOne({Email:req.body.Email})
-        if(!user){
-            return res.send({message:"User not found"})
-        }
-        if(user.Password===req.body.Password){
-            return res.status(200).send({message:`Welcome ${user.role}`,user})
-        }
-        return res.send({message:"Invalid password"})
-    } catch (error) {
-        res.status(500).send({message:"Something went wrong"})
-    }})
-module.exports=router;
+// CRUD - protected routes for admin or authenticated users
+router.get('/users', adminOnly, userController.listUsers);
+router.get('/users/:id', auth, param('id').isMongoId(), userController.getUser);
+router.put('/users/:id', auth, param('id').isMongoId(), userController.updateUser);
+router.delete('/users/:id', auth, param('id').isMongoId(), userController.deleteUser);
+
+module.exports = router;
