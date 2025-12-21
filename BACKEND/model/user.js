@@ -8,7 +8,7 @@ const userSchema = new Schema(
         password: { type: String, required: true },
         phone: { type: String, trim: true },
         city: { type: String, trim: true },
-        role: { type: String, enum: ['admin', 'user'], default: 'admin' },
+        role: { type: String, enum: ['admin', 'user'], default: 'user' },
         isVerified: { type: Boolean, default: false },
         resetToken: String,
         resetExpires: Date,
