@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom'
 import Signup from './components/Signup'
 import Registration from './components/Registration'
 import Home from './components/Home'
+import About from './components/About'
 import Contact from './components/Contact'
 import Mission from './components/Mission'
 import WasteManagement from './components/WasteManagement'
@@ -31,6 +32,8 @@ function App() {
         <Route path='/signup' element={<Signup/>}></Route>
         <Route path='/home' element={<Home/>}></Route>
         <Route path='/r' element={<Registration/>}></Route>
+        <Route path='/about' element={<About/>}></Route>
+        <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/co' element={<Contact/>}></Route>
         <Route path='/mi' element={<Mission/>}></Route>
         <Route path='/user' element={<UserDashboard/>}></Route>

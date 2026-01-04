@@ -72,6 +72,8 @@ const Navbar = () => {
             <>
               {/* 3. FIX: Updated routes to match your file structure */}
               <Button color="inherit" component={RouterLink} to="/home">Home</Button>
+              <Button color="inherit" component={RouterLink} to="/about">About</Button>
+              <Button color="inherit" component={RouterLink} to="/contact">Contact</Button>
               <Button color="inherit" component={RouterLink} to="/signup">Register</Button>
               <Button 
                 variant="outlined" 
@@ -98,9 +100,17 @@ const Navbar = () => {
 
               {/* Dashboard Link based on Role */}
               {user.role === 'admin' ? (
-                <Button color="inherit" component={RouterLink} to="/admin" sx={{ fontWeight: 'bold' }}>Admin Panel</Button>
+                <>
+                  <Button color="inherit" component={RouterLink} to="/admin" sx={{ fontWeight: 'bold' }}>Admin Panel</Button>
+                  <Button color="inherit" component={RouterLink} to="/about">About</Button>
+                  <Button color="inherit" component={RouterLink} to="/contact">Contact</Button>
+                </>
               ) : (
-                <Button color="inherit" component={RouterLink} to="/user">Dashboard</Button>
+                <>
+                  <Button color="inherit" component={RouterLink} to="/user">Dashboard</Button>
+                  <Button color="inherit" component={RouterLink} to="/about">About</Button>
+                  <Button color="inherit" component={RouterLink} to="/contact">Contact</Button>
+                </>
               )}
 
               <IconButton color="inherit" onClick={handleMenu} sx={{ ml: 1 }}>
