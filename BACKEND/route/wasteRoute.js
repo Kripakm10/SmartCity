@@ -32,6 +32,8 @@ router.post(
   body('address').isLength({ min: 5 }).withMessage('Address too short'),
   body('contact').isMobilePhone('any').withMessage('Valid contact number required'),
   body('wasteType').isLength({ min: 3 }).withMessage('Select a waste type'),
+  body('lat').optional().isFloat().withMessage('lat must be a number'),
+  body('lng').optional().isFloat().withMessage('lng must be a number'),
   runValidation,
   wasteController.createWaste
 );

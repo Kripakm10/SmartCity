@@ -180,7 +180,7 @@ const Signup = () => {
 
           <Typography variant="body2" align="center" sx={{ mt: 3, color: 'text.secondary' }}>
             Already have an account?{' '}
-            <Link component={RouterLink} to="/l" underline="hover" color="secondary">
+            <Link component={RouterLink} to="/login" underline="hover" color="secondary">
               Sign in
             </Link> 
           </Typography>

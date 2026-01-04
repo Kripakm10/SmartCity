@@ -10,6 +10,11 @@ const grievanceSchema = new Schema(
     status: { type: String, enum: ['open', 'in-progress', 'resolved', 'closed'], default: 'open' },
     assignedTo: { type: Schema.Types.ObjectId, ref: 'User' },
     submittedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    // optional geo location
+    location: {
+      lat: { type: Number },
+      lng: { type: Number }
+    }
   },
   { timestamps: true }
 );

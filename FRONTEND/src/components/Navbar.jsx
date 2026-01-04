@@ -35,7 +35,7 @@ const Navbar = () => {
     localStorage.clear();
     sessionStorage.clear();
     setAnchorEl(null);
-    navigate('/');
+    navigate('/login');
   };
 
   return (

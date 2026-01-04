@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, CircularProgress, Alert, Box } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, CircularProgress, Alert, Box, Typography } from '@mui/material';
 import axios from 'axios';
+import LocationPicker from './LocationPicker';
 
 const WasteModal = ({ open, onClose, onSuccess }) => {
-  const [formData, setFormData] = useState({ name: '', address: '', contact: '', wasteType: '' });
+  const [formData, setFormData] = useState({ name: '', address: '', contact: '', wasteType: '', lat: null, lng: null });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -15,9 +16,11 @@ const WasteModal = ({ open, onClose, onSuccess }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const res = await axios.post('http://localhost:3000/api/waste', formData, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      const payload = { name: formData.name, address: formData.address, contact: formData.contact, wasteType: formData.wasteType };
+      if (formData.lat !== null && formData.lng !== null) { payload.lat = Number(formData.lat); payload.lng = Number(formData.lng); }
+      const res = await axios.post('http://localhost:3000/api/waste', payload, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
       onSuccess && onSuccess(res.data);
-      setFormData({ name: '', address: '', contact: '', wasteType: '' });
+      setFormData({ name: '', address: '', contact: '', wasteType: '', lat: null, lng: null });
       onClose();
     } catch (err) {
       setError(err?.response?.data?.message || 'Submission failed');
@@ -40,6 +43,12 @@ const WasteModal = ({ open, onClose, onSuccess }) => {
           </TextField>
         </Box>
         {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+        <LocationPicker position={formData.lat && formData.lng ? [formData.lat, formData.lng] : null} setPosition={(pos) => setFormData((s) => ({ ...s, lat: pos ? pos[0] : null, lng: pos ? pos[1] : null }))} />
+        <Box sx={{ mt: 1 }}>
+          {formData.lat && formData.lng && (
+            <Typography variant="body2" color="text.secondary">Selected: {formData.lat.toFixed(5)}, {formData.lng.toFixed(5)}</Typography>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

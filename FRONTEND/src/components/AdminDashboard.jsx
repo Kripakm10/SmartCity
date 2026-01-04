@@ -30,6 +30,7 @@ import {
 } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
 import Navbar from "./Navbar";
+import AdminLocations from './AdminLocations';
 
 // 🎨 Theme
 const theme = createTheme({
@@ -212,6 +213,7 @@ const AdminDashboard = () => {
           { key: 'water', text: "Water Issues", icon: <Opacity /> },
           { key: 'grievances', text: "Grievances", icon: <ReportProblem /> },
           { key: 'registrations', text: "Registrations", icon: <People /> },
+          { key: 'locations', text: "Locations", icon: <Dashboard /> },
           { key: 'logs', text: "Activity Logs", icon: <ReportProblem /> },
         ].map((item) => (
           <ListItem key={item.key} disablePadding sx={{ display: 'block' }}>
@@ -444,6 +446,15 @@ const AdminDashboard = () => {
                       </Grid>
                     ))}
                   </Grid>
+              </Paper>
+            </>
+          )}
+
+          {tab === 'locations' && (
+            <>
+              <Typography variant="h5" color="primary" sx={{ fontWeight: 'bold', mb: 2 }}>Submitted Locations</Typography>
+              <Paper sx={{ p: 2 }}>
+                <AdminLocations />
               </Paper>
             </>
           )}

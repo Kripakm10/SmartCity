@@ -27,6 +27,8 @@ router.post(
   body('name').isLength({ min: 2 }).withMessage('Full name required'),
   body('address').isLength({ min: 5 }).withMessage('Address too short'),
   body('issueType').isIn(['leak', 'supply', 'quality', 'other']).withMessage('Invalid issue type'),
+  body('lat').optional().isFloat().withMessage('lat must be a number'),
+  body('lng').optional().isFloat().withMessage('lng must be a number'),
   runValidation,
   waterController.createWater
 );

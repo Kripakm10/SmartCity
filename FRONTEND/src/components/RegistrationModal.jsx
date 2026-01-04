@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, FormControl, InputLabel, Select, MenuItem, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
+import LocationPicker from './LocationPicker';
+import { Typography } from '@mui/material';
 
 const RegistrationModal = ({ open, onClose, onSuccess }) => {
-  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', department: '', subOption: '' });
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '', department: '', subOption: '', lat: null, lng: null });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -15,9 +17,11 @@ const RegistrationModal = ({ open, onClose, onSuccess }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const res = await axios.post('http://localhost:3000/api/registrations', formData, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      const payload = { firstName: formData.firstName, lastName: formData.lastName, email: formData.email, phone: formData.phone, department: formData.department, subOption: formData.subOption };
+      if (formData.lat !== null && formData.lng !== null) { payload.lat = Number(formData.lat); payload.lng = Number(formData.lng); }
+      const res = await axios.post('http://localhost:3000/api/registrations', payload, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
       onSuccess && onSuccess(res.data);
-      setFormData({ firstName: '', lastName: '', email: '', phone: '', department: '', subOption: '' });
+      setFormData({ firstName: '', lastName: '', email: '', phone: '', department: '', subOption: '', lat: null, lng: null });
       onClose();
     } catch (err) {
       setError(err?.response?.data?.message || 'Submission failed');
@@ -42,6 +46,12 @@ const RegistrationModal = ({ open, onClose, onSuccess }) => {
           </FormControl>
         </Box>
         {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+        <LocationPicker position={formData.lat && formData.lng ? [formData.lat, formData.lng] : null} setPosition={(pos) => setFormData((s) => ({ ...s, lat: pos ? pos[0] : null, lng: pos ? pos[1] : null }))} />
+        <Box sx={{ mt: 1 }}>
+          {formData.lat && formData.lng && (
+            <Typography variant="body2" color="text.secondary">Selected: {formData.lat.toFixed(5)}, {formData.lng.toFixed(5)}</Typography>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

@@ -18,7 +18,8 @@ const createRegistration = async (req, res) => {
       subOption,
     } = req.body;
 
-    const reg = new Registration({
+    const { lat, lng } = req.body;
+    const regPayload = {
       firstName,
       lastName,
       email,
@@ -30,7 +31,10 @@ const createRegistration = async (req, res) => {
       zip,
       department,
       subOption,
-    });
+    };
+    if (typeof lat === 'number' && typeof lng === 'number') regPayload.location = { lat, lng };
+
+    const reg = new Registration(regPayload);
 
     const submittedBy = req.user?.id;
     reg.submittedBy = submittedBy;

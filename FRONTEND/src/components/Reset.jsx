@@ -105,7 +105,7 @@ const Reset = () => {
           )}
 
           <Typography variant="body2" sx={{ mt: 3, color: 'text.secondary' }}>
-            <RouterLink to="/" style={{ color: '#ff7043', textDecoration: 'none' }}>
+            <RouterLink to="/login" style={{ color: '#ff7043', textDecoration: 'none' }}>
               Back to Login
             </RouterLink>
           </Typography>

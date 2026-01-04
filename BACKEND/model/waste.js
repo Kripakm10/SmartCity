@@ -9,6 +9,11 @@ const wasteSchema = new Schema(
     wasteType: { type: String, required: true, trim: true },
     status: { type: String, enum: ['pending', 'scheduled', 'collected'], default: 'pending' },
     submittedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    // optional geo location
+    location: {
+      lat: { type: Number },
+      lng: { type: Number }
+    }
   },
   { timestamps: { createdAt: 'submittedAt' } }
 );

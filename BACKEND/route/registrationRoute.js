@@ -31,6 +31,8 @@ router.post(
   body('email').isEmail().withMessage('Valid email required'),
   body('phone').isMobilePhone('any').withMessage('Valid phone required'),
   body('department').isLength({ min: 2 }).withMessage('Department required'),
+  body('lat').optional().isFloat().withMessage('lat must be a number'),
+  body('lng').optional().isFloat().withMessage('lng must be a number'),
   runValidation,
   registrationController.createRegistration
 );

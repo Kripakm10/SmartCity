@@ -27,6 +27,8 @@ router.post(
   body('name').isLength({ min: 2 }).withMessage('Full name required'),
   body('subject').isLength({ min: 3 }).withMessage('Subject required'),
   body('description').isLength({ min: 5 }).withMessage('Description too short'),
+  body('lat').optional().isFloat().withMessage('lat must be a number'),
+  body('lng').optional().isFloat().withMessage('lng must be a number'),
   runValidation,
   grievanceController.createGrievance
 );

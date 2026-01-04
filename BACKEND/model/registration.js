@@ -16,6 +16,11 @@ const registrationSchema = new Schema(
     subOption: { type: String, trim: true },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     submittedBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    // optional geo location
+    location: {
+      lat: { type: Number },
+      lng: { type: Number }
+    }
   },
   { timestamps: true }
 );

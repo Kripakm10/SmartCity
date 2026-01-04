@@ -4,9 +4,11 @@ const { createLog } = require('./logController');
 
 const createWater = async (req, res) => {
   try {
-    const { name, email, phone, address, issueType, description } = req.body;
+    const { name, email, phone, address, issueType, description, lat, lng } = req.body;
     const submittedBy = req.user?.id;
-    const doc = new WaterRequest({ name, email, phone, address, issueType, description, submittedBy });
+    const payload = { name, email, phone, address, issueType, description, submittedBy };
+    if (typeof lat === 'number' && typeof lng === 'number') payload.location = { lat, lng };
+    const doc = new WaterRequest(payload);
     await doc.save();
 
     createLog({ action: 'create', entityType: 'water', entityId: doc._id, message: `Water request created for ${name}`, createdBy: submittedBy });

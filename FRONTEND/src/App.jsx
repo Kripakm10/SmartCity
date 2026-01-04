@@ -15,6 +15,8 @@ import Grievance from './components/Grievance'
 import UserDashboard from './components/UserDashboard'
 import AdminDashboard from './components/AdminDashboard'
 import Reset from './components/Reset'
+import AdminLocations from './components/AdminLocations'
+import UserRegistrations from './components/UserRegistrations'
 
 
 
@@ -24,8 +26,9 @@ function App() {
   return (
    <>
    <Routes>
-        <Route path='/' element={<Login/>}></Route>
-        <Route path='/s' element={<Signup/>}></Route>
+        <Route path='/' element={<Home/>}></Route>
+        <Route path='/login' element={<Login/>}></Route>
+        <Route path='/signup' element={<Signup/>}></Route>
         <Route path='/home' element={<Home/>}></Route>
         <Route path='/r' element={<Registration/>}></Route>
         <Route path='/co' element={<Contact/>}></Route>
@@ -35,6 +38,8 @@ function App() {
         <Route path='/water' element={<WaterManagement/>}></Route>
         <Route path='/grievance' element={<Grievance/>}></Route>
           <Route path='/admin' element={<AdminDashboard/>}></Route>
+        <Route path='/admin/locations' element={<AdminLocations/>}></Route>
+        <Route path='/user/registrations' element={<UserRegistrations/>}></Route>
          <Route path='/res' element={<Reset/>}></Route>
       </Routes>
    </>

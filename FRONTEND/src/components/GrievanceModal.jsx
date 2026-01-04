@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Alert, Box } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Alert, Box, Typography } from '@mui/material';
 import axios from 'axios';
+import LocationPicker from './LocationPicker';
 
 const GrievanceModal = ({ open, onClose, onSuccess }) => {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', description: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', description: '', lat: null, lng: null });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -15,9 +16,11 @@ const GrievanceModal = ({ open, onClose, onSuccess }) => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      const res = await axios.post('http://localhost:3000/api/grievance', formData, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      const payload = { name: formData.name, email: formData.email, subject: formData.subject, description: formData.description };
+      if (formData.lat !== null && formData.lng !== null) { payload.lat = Number(formData.lat); payload.lng = Number(formData.lng); }
+      const res = await axios.post('http://localhost:3000/api/grievance', payload, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
       onSuccess && onSuccess(res.data);
-      setFormData({ name: '', email: '', subject: '', description: '' });
+      setFormData({ name: '', email: '', subject: '', description: '', lat: null, lng: null });
       onClose();
     } catch (err) {
       setError(err?.response?.data?.message || 'Submission failed');
@@ -35,6 +38,12 @@ const GrievanceModal = ({ open, onClose, onSuccess }) => {
           <TextField label="Description" name="description" value={formData.description} onChange={handleChange} multiline rows={4} required />
         </Box>
         {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+        <LocationPicker position={formData.lat && formData.lng ? [formData.lat, formData.lng] : null} setPosition={(pos) => setFormData((s) => ({ ...s, lat: pos ? pos[0] : null, lng: pos ? pos[1] : null }))} />
+        <Box sx={{ mt: 1 }}>
+          {formData.lat && formData.lng && (
+            <Typography variant="body2" color="text.secondary">Selected: {formData.lat.toFixed(5)}, {formData.lng.toFixed(5)}</Typography>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>

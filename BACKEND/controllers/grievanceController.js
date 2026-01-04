@@ -4,9 +4,11 @@ const { createLog } = require('./logController');
 
 const createGrievance = async (req, res) => {
   try {
-    const { name, email, subject, description } = req.body;
+    const { name, email, subject, description, lat, lng } = req.body;
     const submittedBy = req.user?.id;
-    const doc = new Grievance({ name, email, subject, description, submittedBy });
+    const payload = { name, email, subject, description, submittedBy };
+    if (typeof lat === 'number' && typeof lng === 'number') payload.location = { lat, lng };
+    const doc = new Grievance(payload);
     await doc.save();
 
     createLog({ action: 'create', entityType: 'grievance', entityId: doc._id, message: `Grievance created: ${subject}`, createdBy: submittedBy });

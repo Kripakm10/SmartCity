@@ -5,9 +5,11 @@ const { createLog } = require('./logController');
 // Create a new waste collection request
 const createWaste = async (req, res) => {
   try {
-    const { name, address, contact, wasteType } = req.body;
+    const { name, address, contact, wasteType, lat, lng } = req.body;
     const submittedBy = req.user?.id;
-    const doc = new WasteRequest({ name, address, contact, wasteType, submittedBy });
+    const payload = { name, address, contact, wasteType, submittedBy };
+    if (typeof lat === 'number' && typeof lng === 'number') payload.location = { lat, lng };
+    const doc = new WasteRequest(payload);
     await doc.save();
 
     // log creation
